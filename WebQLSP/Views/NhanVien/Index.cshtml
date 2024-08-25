@@ -1,0 +1,42 @@
+﻿@model IEnumerable<WebQLSP.Models.Employee>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Mã nhân viên
+        </th>
+        <th>
+            Tên nhân viên
+        </th>
+        <th>
+           Số điện thoại
+        </th>
+       
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @item.Emp_ID
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Emp_Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Emp_Phone)
+        </td>
+    </tr>
+}
+
+</table>

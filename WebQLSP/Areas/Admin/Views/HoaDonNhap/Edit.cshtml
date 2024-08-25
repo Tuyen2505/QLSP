@@ -1,0 +1,63 @@
+﻿@model WebQLSP.Models.InvoiceIn
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content-header">
+
+</div>
+
+
+@using (Html.BeginForm("Edit", "HoaDonNhap", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Inv_ID)
+
+        <div class="form-group">
+            <label>Ngày tạo</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Inv_DateIn, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Inv_DateIn, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div>
+            <table class="table" id="invoicetable">
+                <tbody>
+                    @for (int i = 0; i < Model.DetailInvoiceIns.Count; i++)
+                    {
+                        <tr class="d-flex align-items-center" id="row-@i">
+                            <td>
+                                @Html.EditorFor(x => x.DetailInvoiceIns[i].Prod_ID, new { htmlAttributes = new { @class = "form-control opacity-50", @placeholder = "Sản phẩm......" } })
+                            </td>
+                            <td>
+                                @Html.EditorFor(x => x.DetailInvoiceIns[i].Quantity, new { htmlAttributes = new { @class = "form-control opacity-50", @placeholder = "Số lượng......" } })
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <input type="hidden" id="hdnlastindex" name="hdnlastindex" value="0" />
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+
+

@@ -1,0 +1,143 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model PagedList.PagedList<WebQLSP.Models.InvoiceOut>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="content-header">
+    @using (Html.BeginForm())
+    {
+        <div class="d-flex justify-content-start align-items-center">
+            <div class="form-group form-inline flex-grow-1">
+                <input type="search" placeholder="Nhập tên sản phẩm cần tìm......." class="form-control w-50" name="SearchString" />
+                <input type="submit" class="btn btn-primary ml-1 " value="Search" />
+            </div>
+
+            <p>
+                @Html.ActionLink("Create New", "Create")
+            </p>
+
+        </div>
+
+    }
+    @if (Model != null && Model.Any())
+    {
+
+    }
+    else
+    {
+        <p>No results found.</p>
+    }
+</div>
+
+<table class="table">
+    <tr>
+        <th>
+            Mã phiếu
+        </th>
+        <th>
+            Ngày nhập
+        </th>
+        <th>
+            Tên khách hàng
+        </th>
+        <th>
+            Nhân viên tạo
+        </th>
+        <th>
+            Chi tiết hóa đơn
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.Inv_ID
+            </td>
+            <td>
+                @item.Inv_DateOut.ToString("dd/MM/yyyy")
+            </td>
+            <td>
+                @if (item.Customer != null)
+                {
+                    <span>@item.Customer.Cus_Name</span>
+                }
+            </td>
+            <td>
+                @if (item.Employee != null)
+                {
+                    <span>@item.Employee.Emp_Name</span>
+                }
+            </td>
+            <td>
+                <table class="table table-bordered">
+                    @foreach (var dt in item.DetailInvoiceOuts)
+                    {
+                        <tr>
+                            <td style="width:300px">@dt.Product.Prod_Name</td>
+                            <td>@dt.Quantity</td>
+                            <td> @dt.Inv_Total.ToString() VNĐ</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+            <td>
+                <a href="~/HoaDonXuat/Edit?id=@item.Inv_ID">Edit</a>|
+                <a href="~/HoaDonXuat/Details?id=@item.Inv_ID">Details</a>
+                <a href="/" class="text-warning" onclick="handleDelete('@item.Inv_ID')">Delete</a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+
+
+@Html.PagedListPager(
+    Model,
+    page => Url.Action("Index", new { page }),
+    new PagedListRenderOptions
+    {
+        DisplayLinkToIndividualPages = true,
+        DisplayPageCountAndCurrentLocation = false,
+        MaximumPageNumbersToDisplay = 10,
+        LiElementClasses = new string[] { "page-item" },
+    }
+)
+
+
+@section script{
+    <script>
+        function handleDelete(id) {
+            if (confirm("Bạn có thực sự muốn xóa bản ghi có id=" + id + " này không?")) {
+
+                var formData = new FormData();
+                formData.append("id", id);
+
+                $.ajax({
+                    type: "POST",
+                    data: formData,
+                    url: window.location.origin + '/HoaDonXuat/Delete',
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    success: function (response) {
+                        alert(response);
+                        window.location.href = '/HoaDonXuat/Index'
+                    },
+                    error: function (response) {
+                        alert(response);
+                    }
+                });
+            }
+        };
+    </script>
+
+}

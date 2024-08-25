@@ -1,0 +1,84 @@
+﻿@model WebQLSP.Models.InvoiceIn
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    WebQLSP.Models.Product prod = new WebQLSP.Models.Product();
+}
+<div class="container-fluid">
+    <div id="ui-view" data-select2-id="ui-view">
+        <div>
+            <div class="card">
+                <div class="card-header">
+                    Invoice
+                    <strong>@Model.Inv_ID</strong>
+                    <a class="btn btn-sm btn-secondary float-right mr-1 d-print-none" href="#" onclick="javascript:window.print();" data-abc="true">
+                        <i class="fa fa-print"></i> Print
+                    </a>
+                    <a class="btn btn-sm btn-info float-right mr-1 d-print-none" href="~/hoadonnhap/index" data-abc="true">
+                        <i class="fa fa-save"></i> Save
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-sm-4">
+                            <h6 class="mb-3">Details:</h6>
+                            <div>
+                                Invoice
+                                <strong>@Model.Inv_ID</strong>
+                            </div>
+                            <div>@Model.Inv_DateIn.ToString("dd/MM/yyyy")</div>
+                            <div>
+                                Tên khách hàng:
+                                <strong> @Model.Supplier.Sup_Name</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive-sm">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+
+                                    <th>Sản phẩm</th>
+                                    <th class="center">Số lượng</th>
+                                    <th class="right">Giá</th>
+                                    <th class="right">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var dt in Model.DetailInvoiceIns)
+                                {
+                                    <tr>
+                                        <td class="left">@dt.Product.Prod_Name</td>
+                                        <td class="center">@dt.Quantity</td>
+                                        <td class="left"> @dt.Product.Prod_Price_In.ToString("#,##0.00") VNĐ</td>
+                                        <td class="left">@dt.Inv_Total.ToString("#,##0.00") VNĐ</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-lg-4 col-sm-5 ml-auto">
+                            <table class="table table-clear">
+                                <tbody>
+                                    <tr>
+                                        <td class="left">
+                                            <strong>Total</strong>
+                                        </td>
+                                        <td class="right">
+                                            <strong>@ViewBag.Total</strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

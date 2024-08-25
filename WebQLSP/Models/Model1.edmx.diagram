@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="30e9b0212f2e4254b6b2686a7941e1c0" Name="Diagram1" ZoomLevel="71">
+        <EntityTypeShape EntityType="QLSPModel.Brand" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSPModel.Customer" Width="1.5" PointX="3.75" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSPModel.DetailInvoiceIn" Width="1.5" PointX="5.25" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSPModel.DetailInvoiceOut" Width="1.5" PointX="8.25" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSPModel.Employee" Width="1.5" PointX="0.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSPModel.InvoiceIn" Width="1.5" PointX="3" PointY="9.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSPModel.InvoiceOut" Width="1.5" PointX="6" PointY="13.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSPModel.Product" Width="1.5" PointX="3" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSPModel.ProductCatalog" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSPModel.Supplier" Width="1.5" PointX="0.75" PointY="11.125" IsExpanded="true" />
+        <AssociationConnector Association="QLSPModel.FK__Product__Brand_I__4F7CD00D" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSPModel.FK__InvoiceOu__Cus_I__5BE2A6F2" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSPModel.FK__DetailInv__Inv_I__693CA210" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSPModel.FK__DetailInv__Prod___6A30C649" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSPModel.FK__DetailInv__Inv_I__656C112C" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSPModel.FK__DetailInv__Prod___66603565" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSPModel.FK__InvoiceIn__Emp_I__628FA481" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSPModel.FK__InvoiceOu__Emp_I__5CD6CB2B" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSPModel.FK__InvoiceIn__Sup_I__619B8048" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSPModel.FK__Product__Catalog__4E88ABD4" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="QLSPModel.Account" Width="1.5" PointX="3" PointY="16.25" />
+        <AssociationConnector Association="QLSPModel.FK__Account__Emp_ID__6FE99F9F" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,191 @@
+﻿@model PagedList.PagedList<WebQLSP.Models.Product>
+@using PagedList.Mvc
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content-header">
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    @using (Html.BeginForm())
+    {
+        <div class="d-flex justify-content-start align-items-center">
+            <div class="form-group form-inline flex-grow-1">
+                <input type="search" placeholder="Nhập tên sản phẩm cần tìm......." class="form-control w-50" name="SearchString" />
+                <input type="submit" class="btn btn-primary ml-1" value="Search" />
+            </div>
+            <p>
+                @Html.ActionLink("Export to Excel", "ExportToExcel", "SanPham")
+            </p>
+        </div>
+
+    }
+    @if (Model != null && Model.Any())
+    {
+
+    }
+    else
+    {
+        <p>No results found.</p>
+    }
+</div>
+<div>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                Mã Sản Phẩm
+            </th>
+            <th>
+                Tên Sản Phẩm
+            </th>
+            <th>
+                Giá Nhập
+            </th>
+            <th>
+                Giá Bán
+            </th>
+            <th>
+                Hình Ảnh
+            </th>
+            <th>
+                Số Lượng
+            </th>
+            <th>
+                Hãng sản xuất
+            </th>
+            <th>
+                Danh mục sản phẩm
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Prod_ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Prod_Name)
+                </td>
+                <td>
+                    @item.Prod_Price_In.ToString("#,##0.00") VNĐ
+                </td>
+                <td>
+                    @item.Prod_Price_Out.ToString("#,##0.00") VNĐ
+                </td>
+                <td>
+                    <img src="@item.UrlImg" class="w-50 h-50" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @if (item.Brand != null)
+                    {
+                        <span>@item.Brand.Name</span>
+                    }
+                </td>
+                <td>
+                    @if (item.ProductCatalog != null)
+                    {
+                        <span>@item.ProductCatalog.Name</span>
+                    }
+                </td>
+
+                <td>
+                    <a href="~/SanPham/Edit?id=@item.Prod_ID">Edit</a>
+                    <a href="~/SanPham/Details?id=@item.Prod_ID">Details</a>
+                    <a href="/" data-toggle="modal" data-target="#exampleModal">
+                        Delete
+                    </a>
+
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Bạn có chắc chắn xóa sản phẩm này không</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="card p-3 bg-white">
+                                        <i class="fa fa-apple"></i>
+                                        <div class="about-product text-center mt-2">
+                                            <img src="@item.UrlImg" width="200">
+                                            <div>
+                                                <h4>@item.Prod_Name</h4>
+                                            </div>
+                                        </div>
+                                        <div class="stats mt-2">
+                                            <div class="d-flex justify-content-between p-price"><span>Giá nhập</span><span>@item.Prod_Price_In.ToString("#,##0.00") VNĐ</span></div>
+                                            <div class="d-flex justify-content-between p-price"><span>Giá bán</span><span>@item.Prod_Price_Out.ToString("#,##0.00") VNĐ</span></div>
+                                            <div class="d-flex justify-content-between p-price"><span>Tồn kho</span><span>@item.Quantity</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" id="btnDel" onclick="handleDelete('@item.Prod_ID')">Ok</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+
+Trang @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) / @Model.PageCount
+
+
+@Html.PagedListPager(
+    Model,
+    page => Url.Action("Index", new { page }),
+    new PagedListRenderOptions
+    {
+        DisplayLinkToIndividualPages = true,
+        DisplayPageCountAndCurrentLocation = false,
+        MaximumPageNumbersToDisplay = 10,
+        LiElementClasses = new string[] { "page-item" },
+    }
+)
+
+
+
+
+@section script{
+    <script>function handleDelete(id) {
+            var formData = new FormData();
+            formData.append("id", id);
+
+            $.ajax({
+                type: "POST",
+                data: formData,
+                url: window.location.origin + '/SanPham/Delete',
+                processData: false,
+                contentType: false,
+                cache: false,
+                success: function (response) {
+                    toastr.success(response)
+                    setTimeout(function () {
+                        window.location.href = '/SanPham/Index'
+                    },300)
+                },
+                error: function (response) {
+                    toastr.error(response)
+                }
+            });
+
+        }</script>
+
+}
+
+

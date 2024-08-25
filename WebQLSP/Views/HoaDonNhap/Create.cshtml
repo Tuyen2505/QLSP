@@ -1,0 +1,155 @@
+﻿@model WebQLSP.Models.InvoiceIn
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    WebQLSP.Models.QLSPEntities db = new WebQLSP.Models.QLSPEntities();
+}
+<div class="content-header">
+
+</div>
+@using (Html.BeginForm("Create", "HoaDonNhap", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="@Model.Inv_ID">Mã hóa đơn</label>
+            <div>
+                @Html.EditorFor(model => model.Inv_ID, new { htmlAttributes = new { @class = "form-control text-default", @placeholder = "Nhập mã hóa đơn....." } })
+                @Html.ValidationMessageFor(model => model.Inv_ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="@Model.Inv_DateIn">Ngày tạo</label>
+            <div>
+                <input type="date" name="Inv_DateIn" class="form-control opacity-50" />
+                @Html.ValidationMessageFor(model => model.Inv_DateIn, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-10">
+            <div class="checkbox">
+                <input type="hidden" name="isDelete" value="false" />
+                @Html.ValidationMessageFor(model => model.isDelete, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div class="form-group">
+        <label for="Sup_ID">Nhà cung cấp</label>
+        <div class="col-md-10">
+            <select class="form-control" name="Sup_ID">
+                <option selected>---Chọn nhà cung cấp---</option>
+                @foreach (var i in db.Suppliers.ToList())
+                {
+                    <option value="@i.Sup_ID">@i.Sup_Name</option>
+                }
+            </select>
+
+        </div>
+    </div>
+    <div class="">
+        <table class="table" id="invoicetable">
+            <tbody>
+                @for (int i = 0; i < Model.DetailInvoiceIns.Count; i++)
+                {
+                    <tr class="d-flex align-items-center" id="row-@i">
+                        <td>
+                            <div class="d-flex">
+                                <select class="form-control" name="DetailInvoiceIns[@i].Prod_ID">
+                                    <option selected>--Chọn sản phẩm--</option>
+                                    @foreach (var item in db.Products.ToList())
+                                    {
+                                        if (item.isDelete == false)
+                                        {
+                                            <option value="@item.Prod_ID">@item.Prod_Name</option>
+                                        }
+                                    }
+                                </select>
+                                <div>
+                                    <button type="button" class="btn btn-info ml-1" data-toggle="modal" data-target="#exampleModal">
+                                        <a href="~/sanpham/create"><i class="nav-icon fas fa-plus"></i></a>
+                                    </button>
+                                </div>
+                            </div>
+                            @*@Html.EditorFor(x => x.DetailInvoiceIns[i].Prod_ID, new { htmlAttributes = new { @class = "form-control opacity-50", @placeholder = "Sản phẩm......" } })*@
+                        </td>
+                        <td>
+                            @Html.EditorFor(x => x.DetailInvoiceIns[i].Quantity, new { htmlAttributes = new { @class = "form-control opacity-50", @placeholder = "Số lượng......" } })
+                        </td>
+                        <td>
+                            <button style="width: 100px" class="btn btn-success btn-add form-control mw-100" id="btn-add" onclick="AddItem(this, event)">Add</button>
+                        </td>
+                        <td>
+                            <button style="width: 100px" class="btn btn-danger btn-delete form-control mw-100" id="btn-delete" onclick="DeleteItem(this, event)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+
+        <input type="hidden" id="hdnlastindex" name="hdnlastindex" value="0" />
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+@section script{
+    <script type="text/javascript">
+        function DeleteItem(btn, event) {
+            event.preventDefault();
+            var row = btn.closest('tr');
+            if (row.parentNode.rows.length > 1) {
+                row.remove();
+            } else {
+                alert('Không thể xóa');
+            }
+        }
+
+        function AddItem(btn, event) {
+            event.preventDefault();
+            var lastRowIndex = parseInt(document.getElementById('hdnlastindex').value);
+            var nextRowIndex = lastRowIndex + 1;
+
+            var newRow = document.getElementById('row-' + lastRowIndex).cloneNode(true);
+            newRow.id = 'row-' + nextRowIndex;
+
+           
+            var inputs = newRow.getElementsByTagName('input');
+            for (var i = 0; i < inputs.length; i++) {
+                var name = inputs[i].name.replace('[' + lastRowIndex + ']', '[' + nextRowIndex + ']');
+                inputs[i].name = name;
+                inputs[i].value = '';
+            }
+
+            // Update the select element
+            var select = newRow.querySelector('select');
+            select.name = 'DetailInvoiceIns[' + nextRowIndex + '].Prod_ID';
+            select.value = ''; 
+
+            var deleteButton = newRow.querySelector('.btn-delete');
+            deleteButton.onclick = function () { DeleteItem(this, event); };
+
+            document.getElementById('invoicetable').appendChild(newRow);
+
+        
+            document.getElementById('hdnlastindex').value = nextRowIndex;
+        }
+
+    </script>
+}

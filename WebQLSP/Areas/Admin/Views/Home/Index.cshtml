@@ -1,0 +1,197 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Trang chủ</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 col-sm-6 col-md-3">
+        <a href="~/admin/sanpham/index" class="info-box">
+            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-mobile"></i></span>
+            <div class="info-box-content">
+                <span>Danh sách sản phẩm</span>
+            </div>
+        </a>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <a href="~/admin/hoadonnhap/index" class="info-box">
+            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-file-invoice"></i></span>
+            <div class="info-box-content">
+                <span class="">Danh sách hóa đơn nhập</span>
+            </div>
+        </a>
+    </div>
+    <!-- /.col -->
+    <!-- fix for small devices only -->
+    <div class="clearfix hidden-md-up"></div>
+
+    <div class="col-12 col-sm-6 col-md-3">
+        <a href="~/admin/hoadonxuat/index" class="info-box">
+            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-file-invoice"></i></span>
+            <div class="info-box-content">
+                <span class="">Danh sách hóa đơn xuất</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-3">
+        <a href="~/admin/thongke/index" class="info-box">
+            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-chart-pie"></i></span>
+            <div class="info-box-content">
+                <span class="">Thống kê</span>
+            </div>
+        </a>
+    </div>
+
+
+
+    <!--------------------------------------------------------------------------------->
+    <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+        <section class="content">
+            <div class="container-fluid">
+                <!-- BAR CHART -->
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">Thống kê</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            @*<button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>*@
+                        </div>
+                        <div>
+                            <form action="/ThongKe/GetStatictical" method="get" id="frm_data">
+                                <input type="datetime" name="fromdate" id="fromdate" value="" />
+                                <input type="datetime" name="todate" id="todate" value="" />
+                                @*<input type="submit" name="name" value="Thong ke"/>*@
+                                <button type="button" class="btn btn-primary" id="btn_thongke">thongke</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+                <!-- /.col (RIGHT) -->
+            </div>
+            <!-- /.row -->
+
+            @section script{
+                <script>
+
+
+                    $(function () {
+                        function formatDate(date) {
+                            var month = date.getMonth() + 1;
+                            var day = date.getDate();
+                            //return date.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+                            return (day < 10 ? '0' : '') + day + '/' + (month < 10 ? '0' : '') + month + '/' + date.getFullYear();
+                        }
+
+                        var arrDoanhThu = [];
+                        var arrLoiNhuan = [];
+                        var arrDate = [];
+                        var firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+                        var lastDay = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0); // Lấy ngày cuối cùng của tháng hiện tại
+
+                        // Format ngày tháng để đúng định dạng
+                        var formattedFirstDay = formatDate(firstDay);
+                        var formattedLastDay = formatDate(lastDay);
+
+                        // Đặt giá trị cho fromdate và todate
+                        $('#fromdate').val(formattedFirstDay);
+                        $('#todate').val(formattedLastDay);
+
+                        $("#btn_thongke").click(function () {
+                            var fromdate = $('#fromdate').val();
+                            var todate = $('#todate').val();
+
+                            $.ajax({
+                                //window.location.href = '/Thongke/Index';
+                                url: '/admin/ThongKe/GetStatictical',
+                                type: 'GET',
+                                data: { fromdate: fromdate, todate: todate },
+                                /*data: formData,*/
+                                success: function (rs) {
+
+                                    $.each(rs.Data, function (i, item) {
+                                        var strDate = moment(item.Date).format('DD/MM/yyyy');
+                                        arrDate.push(strDate);
+                                        arrDoanhThu.push(item.DoanhThu);
+                                        arrLoiNhuan.push(item.LoiNhuan);
+                                    });
+                                    var areaChartData = {
+                                        labels: arrDate,
+                                        datasets: [
+                                            {
+                                                label: 'Lợi nhuận',
+                                                backgroundColor: 'rgba(60,141,188,0.9)',
+                                                borderColor: 'rgba(60,141,188,0.8)',
+                                                pointRadius: false,
+                                                pointColor: '#3b8bba',
+                                                pointStrokeColor: 'rgba(60,141,188,1)',
+                                                pointHighlightFill: '#fff',
+                                                pointHighlightStroke: 'rgba(60,141,188,1)',
+                                                data: arrLoiNhuan
+                                            },
+                                            {
+                                                label: 'Doanh thu',
+                                                backgroundColor: 'rgba(210, 214, 222, 1)',
+                                                borderColor: 'rgba(210, 214, 222, 1)',
+                                                pointRadius: false,
+                                                pointColor: 'rgba(210, 214, 222, 1)',
+                                                pointStrokeColor: '#c1c7d1',
+                                                pointHighlightFill: '#fff',
+                                                pointHighlightStroke: 'rgba(220,220,220,1)',
+                                                data: arrDoanhThu
+                                            }
+                                        ]
+                                    }
+
+                                    var barChartCanvas = $('#barChart').get(0).getContext('2d')
+                                    var barChartData = $.extend(true, {}, areaChartData)
+                                    var temp0 = areaChartData.datasets[0]
+                                    var temp1 = areaChartData.datasets[1]
+                                    barChartData.datasets[0] = temp1
+                                    barChartData.datasets[1] = temp0
+
+                                    var barChartOptions = {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        datasetFill: false
+                                    }
+
+                                    new Chart(barChartCanvas, {
+                                        type: 'bar',
+                                        data: barChartData,
+                                        options: barChartOptions
+                                    })
+                                }
+                            });
+                        })
+
+                    })</script>
+            }
+    </div>
+
+</div>

@@ -1,0 +1,30 @@
+﻿@model WebQLSP.Models.Product
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="content-header">
+    <div class="d-flex justify-content-center container mt-5">
+        <div class="card p-3 bg-white">
+            <i class="fa fa-apple"></i>
+            <div class="about-product text-center mt-2">
+                <img src="@Model.UrlImg" width="300">
+                <div>
+                    <h4>@Model.Prod_Name</h4>
+                </div>
+            </div>
+            <div class="stats mt-2">
+                <div class="d-flex justify-content-between p-price"><span>Giá nhập</span><span>@Model.Prod_Price_In.ToString("#,##0.00") VNĐ</span></div>
+                <div class="d-flex justify-content-between p-price"><span>Giá bán</span><span>@Model.Prod_Price_Out.ToString("#,##0.00") VNĐ</span></div>
+                <div class="d-flex justify-content-between p-price"><span>Tồn kho</span><span>@Model.Quantity</span></div>
+            </div>
+        </div>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Prod_ID }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</div>
